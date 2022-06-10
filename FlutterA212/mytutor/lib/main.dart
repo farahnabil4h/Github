@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mytutor/views/loginscreen.dart';
 
 void main() {
@@ -15,6 +16,9 @@ class MyApp extends StatelessWidget {
       title: 'MY Tutor',
       theme: ThemeData(
         primarySwatch: Colors.lightGreen,
+        textTheme: GoogleFonts.poppinsTextTheme(
+          Theme.of(context).textTheme.apply(),
+        ),
       ),
       home: const MySplashScreen(title: 'MY Tutor'),
     );
@@ -50,27 +54,6 @@ class _MySplashScreenState extends State<MySplashScreen> {
                     image: AssetImage('assets/images/splashscreentutor.png'),
                     fit: BoxFit.cover)),
           ),
-          /*const Align(
-            alignment: Alignment(-0.75, -0.05),
-            child: Text(
-              'Welcome to',
-              style: TextStyle(
-                fontSize: 30,
-                color: Colors.black,
-              ),
-            ),
-          ),
-          const Align(
-            alignment: Alignment(-0.70, 0.10),
-            child: Text(
-              'MY Tutor',
-              style: TextStyle(
-                fontSize: 50,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-          ),*/
         ],
       ),
     );

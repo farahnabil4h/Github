@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-//import 'dart:io';
+import 'dart:io';
 import 'package:fluttertoast/fluttertoast.dart';
 //import 'package:image_cropper/image_cropper.dart';
-//import 'package:image_picker/image_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import '../constants.dart';
 //import 'dart:async';
@@ -18,8 +18,8 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   late double screenHeight, screenWidth, ctrwidth;
-  //String pathAsset = 'assets/images/camera.png';
-  //var _image;
+  String pathAsset = 'assets/images/camera.png';
+  var _image;
   final TextEditingController nameEditingController = TextEditingController();
   final TextEditingController emailEditingController = TextEditingController();
   final TextEditingController passwordEditingController =
@@ -31,7 +31,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
 
   @override
-  /*void dispose() {
+  void dispose() {
     print("dispose was called");
     nameEditingController.dispose();
     emailEditingController.dispose();
@@ -39,7 +39,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     phonenoEditingController.dispose();
     addressEditingController.dispose();
     super.dispose();
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +63,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           key: _formKey,
           child: Column(children: [
             const SizedBox(height: 10),
-            /*Card(
+            Card(
               child: GestureDetector(
                   onTap: () => {_takePictureDialog()},
                   child: SizedBox(
@@ -75,7 +75,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               _image,
                               fit: BoxFit.cover,
                             ))),
-            ),*/
+            ),
             const SizedBox(height: 10),
             TextFormField(
               controller: nameEditingController,
@@ -185,7 +185,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  /*_takePictureDialog() {
+  _takePictureDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -213,9 +213,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ));
       },
     );
-  }*/
+  }
 
-  /*_galleryPicker() async {
+  _galleryPicker() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(
       source: ImageSource.gallery,
@@ -226,9 +226,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _image = File(pickedFile.path);
       //_cropImage();
     }
-  }*/
+  }
 
-  /*_cameraPicker() async {
+  _cameraPicker() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(
       source: ImageSource.camera,
@@ -240,7 +240,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       setState(() {});
       //_cropImage();
     }
-  }*/
+  }
 
   /*Future<void> _cropImage() async {
     File? croppedFile = (await ImageCropper().cropImage(
@@ -308,7 +308,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     String password = passwordEditingController.text;
     String phoneno = phonenoEditingController.text;
     String address = addressEditingController.text;
-    //String base64Image = base64Encode(_image!.readAsBytesSync());
+    String base64Image = base64Encode(_image!.readAsBytesSync());
     http.post(
         Uri.parse(CONSTANTS.server + "/mytutor/mobile/php/register_user.php"),
         body: {
@@ -317,7 +317,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           "password": password,
           "phoneno": phoneno,
           "address": address,
-          // "image": base64Image,
+          "image": base64Image,
         }).then((response) {
       print(response.body);
       var data = jsonDecode(response.body);

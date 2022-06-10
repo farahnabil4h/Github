@@ -6,6 +6,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import '../constants.dart';
+import '../models/user.dart';
+import 'menuscreen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -222,18 +224,18 @@ class _LoginScreenState extends State<LoginScreen> {
       http.post(
           Uri.parse(CONSTANTS.server + "/mytutor/mobile/php/login_user.php"),
           body: {"email": _email, "password": _password}).then((response) {
-        print(response.body);
+        //print(response.body);
         var data = jsonDecode(response.body);
         if (response.statusCode == 200 && data['status'] == 'success') {
-          //Admin admin = Admin.fromJson(data['data']);
+          User user = User.fromJson(data['data']);
           Fluttertoast.showToast(
               msg: "Success",
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
               timeInSecForIosWeb: 1,
               fontSize: 16.0);
-          /*Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (content) => const MainScreen()));*/
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (content) => const MenuScreen()));
         } else {
           Fluttertoast.showToast(
               msg: "Failed",
