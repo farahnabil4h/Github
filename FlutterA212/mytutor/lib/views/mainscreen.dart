@@ -171,7 +171,7 @@ class _MainScreenState extends State<MainScreen> {
           });
           setState(() {});
         } else {
-          titlecenter = "No Product Available";
+          titlecenter = "No Subject Available";
           setState(() {});
         }
       }
