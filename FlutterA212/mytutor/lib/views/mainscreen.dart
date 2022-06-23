@@ -166,7 +166,6 @@ class _MainScreenState extends State<MainScreen> {
   void _loadSubjects(int pageno, String _search) {
     curpage = pageno;
     numofpage ?? 1;
-    //print(_search);
     http.post(
         Uri.parse(CONSTANTS.server + "/mytutor/mobile/php/load_subjects.php"),
         body: {
@@ -208,7 +207,7 @@ class _MainScreenState extends State<MainScreen> {
                   TextField(
                     controller: searchController,
                     decoration: InputDecoration(
-                        labelText: 'Search',
+                        labelText: 'Enter Subject',
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5.0))),
                   ),

@@ -73,7 +73,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   border: OutlineInputBorder(
                                       borderRadius:
                                           BorderRadius.circular(5.0))),
-                              //keyboardType: TextInputType.emailAddress,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter valid email';
@@ -99,7 +98,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   border: OutlineInputBorder(
                                       borderRadius:
                                           BorderRadius.circular(5.0))),
-                              //keyboardType: TextInputType.visiblePassword,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter your password';
@@ -142,7 +140,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           ],
                         ),
                       ),
-                      //GestureDetector(child: Text(""))
                     ],
                   )))),
     ));
@@ -218,7 +215,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void _loginUser() {
     String _email = emailController.text;
     String _password = passwordController.text;
-    //print(_email);
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       http.post(

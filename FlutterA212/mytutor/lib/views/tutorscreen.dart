@@ -209,6 +209,11 @@ class _TutorScreenState extends State<TutorScreen> {
                   Text(tutorList![index].tutorDescription.toString(),
                       style: const TextStyle(
                           fontSize: 14, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 5),
+                  const Text("Subject:", style: TextStyle(fontSize: 14)),
+                  Text(tutorList![index].subjectName.toString(),
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.bold)),
                 ])
               ],
             )),
