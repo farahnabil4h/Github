@@ -36,7 +36,7 @@ class _TutorScreenState extends State<TutorScreen> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: const Text('MY Tutor', style: TextStyle(color: Colors.white)),
+        title: const Text('MY Tutor'),
         centerTitle: true,
       ),
       body: tutorList!.isEmpty
@@ -58,67 +58,56 @@ class _TutorScreenState extends State<TutorScreen> {
                 Expanded(
                     child: GridView.count(
                         crossAxisCount: 2,
-                        childAspectRatio: (1 / 2),
+                        childAspectRatio: (1 / 1),
                         children: List.generate(tutorList!.length, (index) {
-                          return Card(
-                              child: Column(
-                            children: [
-                              Flexible(
-                                flex: 6,
-                                child: CachedNetworkImage(
-                                  imageUrl: CONSTANTS.server +
-                                      "/mytutor/mobile/assets/tutors/" +
-                                      tutorList![index].tutorId.toString() +
-                                      '.jpg',
-                                  placeholder: (context, url) =>
-                                      const CircularProgressIndicator(),
-                                  errorWidget: (context, url, error) =>
-                                      const Icon(Icons.error),
+                          return InkWell(
+                            splashColor: Colors.green,
+                            onTap: () => {_loadTutorDetails(index)},
+                            child: Card(
+                                child: Column(
+                              children: [
+                                Flexible(
+                                  flex: 6,
+                                  child: CachedNetworkImage(
+                                    imageUrl: CONSTANTS.server +
+                                        "/mytutor/mobile/assets/tutors/" +
+                                        tutorList![index].tutorId.toString() +
+                                        '.jpg',
+                                    placeholder: (context, url) =>
+                                        const CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                        const Icon(Icons.error),
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 10),
-                              Flexible(
-                                  flex: 4,
-                                  child: Center(
-                                    child: Column(
-                                      children: [
-                                        const Text("Name:",
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(fontSize: 14)),
-                                        Text(
+                                const SizedBox(height: 10),
+                                Flexible(
+                                    flex: 4,
+                                    child: Center(
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                              tutorList![index]
+                                                  .tutorName
+                                                  .toString(),
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold)),
+                                          const SizedBox(height: 5),
+                                          Text(
                                             tutorList![index]
-                                                .tutorName
-                                                .toString(),
-                                            textAlign: TextAlign.center,
-                                            style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold)),
-                                        const SizedBox(height: 5),
-                                        const Text("Email:",
-                                            style: TextStyle(fontSize: 14)),
-                                        Text(
-                                          tutorList![index]
-                                              .tutorEmail
-                                              .toString(),
-                                          style: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        const SizedBox(height: 5),
-                                        const Text("Phone:",
-                                            style: TextStyle(fontSize: 14)),
-                                        Text(
-                                            tutorList![index]
-                                                .tutorPhone
+                                                .tutorEmail
                                                 .toString(),
                                             style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold)),
-                                      ],
-                                    ),
-                                  ))
-                            ],
-                          ));
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                        ],
+                                      ),
+                                    ))
+                              ],
+                            )),
+                          );
                         }))),
                 SizedBox(
                   height: 30,
@@ -171,5 +160,70 @@ class _TutorScreenState extends State<TutorScreen> {
         }
       }
     });
+  }
+
+  _loadTutorDetails(int index) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            title: const Text(
+              "Tutor Details",
+              textAlign: TextAlign.center,
+              style: TextStyle(),
+            ),
+            content: SingleChildScrollView(
+                child: Column(
+              children: [
+                CachedNetworkImage(
+                  imageUrl: CONSTANTS.server +
+                      "/mytutor/mobile/assets/tutors/" +
+                      tutorList![index].tutorId.toString() +
+                      '.jpg',
+                  placeholder: (context, url) =>
+                      const CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                ),
+                const SizedBox(height: 15),
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  const Text("Name:",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(fontSize: 14)),
+                  Text(tutorList![index].tutorName.toString(),
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 5),
+                  const Text("Email:", style: TextStyle(fontSize: 14)),
+                  Text(tutorList![index].tutorEmail.toString(),
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 5),
+                  const Text("Phone:", style: TextStyle(fontSize: 14)),
+                  Text(tutorList![index].tutorPhone.toString(),
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 5),
+                  const Text("About:", style: TextStyle(fontSize: 14)),
+                  Text(tutorList![index].tutorDescription.toString(),
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.bold)),
+                ])
+              ],
+            )),
+            actions: [
+              TextButton(
+                child: const Text(
+                  "Close",
+                  style: TextStyle(),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 }

@@ -18,11 +18,12 @@ class _MainScreenState extends State<MainScreen> {
   late double screenHeight, screenWidth, resWidth;
   var numofpage, curpage = 1;
   var color;
-
+  TextEditingController searchController = TextEditingController();
+  String search = "";
   @override
   void initState() {
     super.initState();
-    _loadSubjects(1);
+    _loadSubjects(1, search);
   }
 
   @override
@@ -37,7 +38,15 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('MY Tutor', style: TextStyle(color: Colors.white)),
+        title: const Text('MY Tutor'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              _loadSearchDialog();
+            },
+          )
+        ],
       ),
       body: subjectList!.isEmpty
           ? Center(
@@ -140,7 +149,7 @@ class _MainScreenState extends State<MainScreen> {
                       return SizedBox(
                         width: 40,
                         child: TextButton(
-                            onPressed: () => {_loadSubjects(index + 1)},
+                            onPressed: () => {_loadSubjects(index + 1, search)},
                             child: Text(
                               (index + 1).toString(),
                               style: TextStyle(color: color),
@@ -154,13 +163,18 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  void _loadSubjects(int pageno) {
+  void _loadSubjects(int pageno, String _search) {
     curpage = pageno;
     numofpage ?? 1;
+    //print(_search);
     http.post(
         Uri.parse(CONSTANTS.server + "/mytutor/mobile/php/load_subjects.php"),
-        body: {'pageno': pageno.toString()}).then((response) {
+        body: {
+          'pageno': pageno.toString(),
+          'search': _search,
+        }).then((response) {
       var jsondata = jsonDecode(response.body);
+      //print(jsondata);
       if (response.statusCode == 200 && jsondata['status'] == 'success') {
         var extractdata = jsondata['data'];
         numofpage = int.parse(jsondata['numofpage']);
@@ -176,5 +190,51 @@ class _MainScreenState extends State<MainScreen> {
         }
       }
     });
+  }
+
+  void _loadSearchDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          // return object of type Dialog
+          return AlertDialog(
+            title: const Text(
+              "Search ",
+            ),
+            content: SizedBox(
+              height: screenHeight / 6,
+              child: Column(
+                children: [
+                  TextField(
+                    controller: searchController,
+                    decoration: InputDecoration(
+                        labelText: 'Search',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0))),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      search = searchController.text;
+                      Navigator.of(context).pop();
+                      _loadSubjects(1, search);
+                    },
+                    child: const Text("Search"),
+                  )
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text(
+                  "Close",
+                  style: TextStyle(),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 }
