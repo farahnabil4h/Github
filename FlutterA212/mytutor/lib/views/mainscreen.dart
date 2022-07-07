@@ -1,12 +1,15 @@
 import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import '../constants.dart';
 import '../models/subject.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -16,6 +19,7 @@ class _MainScreenState extends State<MainScreen> {
   List<Subject>? subjectList = <Subject>[];
   String titlecenter = "Loading...";
   late double screenHeight, screenWidth, resWidth;
+  int value = 0;
   var numofpage, curpage = 1;
   var color;
   TextEditingController searchController = TextEditingController();
@@ -45,7 +49,16 @@ class _MainScreenState extends State<MainScreen> {
             onPressed: () {
               _loadSearchDialog();
             },
-          )
+          ),
+          TextButton.icon(
+            onPressed: () async {},
+            icon: const Icon(
+              Icons.shopping_cart,
+              color: Colors.black,
+            ),
+            label: Text(value.toString(),
+                style: const TextStyle(color: Colors.black)),
+          ),
         ],
       ),
       body: subjectList!.isEmpty
@@ -118,19 +131,34 @@ class _MainScreenState extends State<MainScreen> {
                                             style: const TextStyle(
                                                 fontSize: 20,
                                                 color: Colors.green)),
-                                        Text(
-                                            "Rating: " +
-                                                double.parse(subjectList![index]
-                                                        .subjectRating
-                                                        .toString())
-                                                    .toStringAsFixed(2) +
-                                                "/5",
-                                            style: const TextStyle(
-                                                fontSize: 20,
-                                                color: Colors.green)),
+                                        Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              const Spacer(),
+                                              Text(
+                                                  "Rating: " +
+                                                      double.parse(subjectList![
+                                                                  index]
+                                                              .subjectRating
+                                                              .toString())
+                                                          .toStringAsFixed(2) +
+                                                      "/5",
+                                                  style: const TextStyle(
+                                                      fontSize: 20,
+                                                      color: Colors.green)),
+                                              Expanded(
+                                                  child: IconButton(
+                                                      onPressed: () {
+                                                        _addtocartDialog(index);
+                                                      },
+                                                      icon: const Icon(Icons
+                                                          .shopping_cart))),
+                                            ]),
                                       ],
                                     ),
-                                  ))
+                                  )),
+                              const SizedBox(height: 20),
                             ],
                           ));
                         }))),
@@ -235,5 +263,38 @@ class _MainScreenState extends State<MainScreen> {
             ],
           );
         });
+  }
+
+  _addtocartDialog(int index) {
+    _addtoCart(index);
+  }
+
+  void _addtoCart(int index) {
+    http.post(
+        Uri.parse(CONSTANTS.server + "/mytutor/mobile/php/insert_cart.php"),
+        body: {
+          "subid": subjectList![index].subjectId.toString(),
+        }).timeout(
+      const Duration(seconds: 5),
+      onTimeout: () {
+        return http.Response(
+            'Error', 408); // Request Timeout response status code
+      },
+    ).then((response) {
+      print(response.body);
+      var jsondata = jsonDecode(response.body);
+      if (response.statusCode == 200 && jsondata['status'] == 'success') {
+        print(jsondata['data']['carttotal'].toString());
+        setState(() {
+          value = jsondata['data']['carttotal'];
+        });
+        Fluttertoast.showToast(
+            msg: "Success",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 16.0);
+      }
+    });
   }
 }

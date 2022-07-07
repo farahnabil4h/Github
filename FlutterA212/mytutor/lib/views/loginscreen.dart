@@ -223,15 +223,17 @@ class _LoginScreenState extends State<LoginScreen> {
         //print(response.body);
         var data = jsonDecode(response.body);
         if (response.statusCode == 200 && data['status'] == 'success') {
-          User user = User.fromJson(data['data']);
           Fluttertoast.showToast(
               msg: "Success",
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
               timeInSecForIosWeb: 1,
               fontSize: 16.0);
+          var extractdata = data['data'];
+          User user = User.fromJson(extractdata);
+          print(user.email);
           Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (content) => const MenuScreen()));
+              MaterialPageRoute(builder: (content) => MenuScreen(user: user)));
         } else {
           Fluttertoast.showToast(
               msg: "Failed",

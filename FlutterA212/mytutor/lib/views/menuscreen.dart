@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mytutor/views/tutorscreen.dart';
+import '../models/user.dart';
 import 'mainscreen.dart';
 
 class MenuScreen extends StatefulWidget {
-  const MenuScreen({Key? key}) : super(key: key);
+  final User user;
+  const MenuScreen({Key? key, required this.user}) : super(key: key);
 
   @override
   State<MenuScreen> createState() => _MenuScreenState();
