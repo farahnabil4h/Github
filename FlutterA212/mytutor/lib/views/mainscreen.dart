@@ -5,11 +5,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import '../constants.dart';
 import '../models/subject.dart';
+import '../models/user.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({
-    Key? key,
-  }) : super(key: key);
+  final User user;
+  const MainScreen({Key? key, required this.user}) : super(key: key);
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -19,7 +19,6 @@ class _MainScreenState extends State<MainScreen> {
   List<Subject>? subjectList = <Subject>[];
   String titlecenter = "Loading...";
   late double screenHeight, screenWidth, resWidth;
-  int value = 0;
   var numofpage, curpage = 1;
   var color;
   TextEditingController searchController = TextEditingController();
@@ -56,7 +55,7 @@ class _MainScreenState extends State<MainScreen> {
               Icons.shopping_cart,
               color: Colors.black,
             ),
-            label: Text(value.toString(),
+            label: Text(widget.user.cart.toString(),
                 style: const TextStyle(color: Colors.black)),
           ),
         ],
@@ -273,6 +272,7 @@ class _MainScreenState extends State<MainScreen> {
     http.post(
         Uri.parse(CONSTANTS.server + "/mytutor/mobile/php/insert_cart.php"),
         body: {
+          "email": widget.user.email.toString(),
           "subid": subjectList![index].subjectId.toString(),
         }).timeout(
       const Duration(seconds: 5),
@@ -286,7 +286,7 @@ class _MainScreenState extends State<MainScreen> {
       if (response.statusCode == 200 && jsondata['status'] == 'success') {
         print(jsondata['data']['carttotal'].toString());
         setState(() {
-          value = jsondata['data']['carttotal'];
+          widget.user.cart = jsondata['data']['carttotal'].toString();
         });
         Fluttertoast.showToast(
             msg: "Success",

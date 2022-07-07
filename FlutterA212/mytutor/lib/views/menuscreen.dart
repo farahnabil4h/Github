@@ -12,13 +12,19 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-  static const List<Widget> _pages = <Widget>[
-    MainScreen(),
-    TutorScreen(),
-    MainScreen(),
-    MainScreen(),
-    MainScreen(),
-  ];
+  late final List _pages;
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      MainScreen(user: widget.user),
+      TutorScreen(user: widget.user),
+      MainScreen(user: widget.user),
+      MainScreen(user: widget.user),
+      MainScreen(user: widget.user),
+    ];
+  }
+
   int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {

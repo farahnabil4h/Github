@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../constants.dart';
 import '../models/tutor.dart';
+import '../models/user.dart';
 
 class TutorScreen extends StatefulWidget {
-  const TutorScreen({Key? key}) : super(key: key);
+  final User user;
+  const TutorScreen({Key? key, required this.user}) : super(key: key);
 
   @override
   State<TutorScreen> createState() => _TutorScreenState();
