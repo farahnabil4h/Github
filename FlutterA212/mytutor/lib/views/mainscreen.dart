@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import '../constants.dart';
 import '../models/subject.dart';
 import '../models/user.dart';
+import 'cartscreen.dart';
 
 class MainScreen extends StatefulWidget {
   final User user;
@@ -21,6 +22,7 @@ class _MainScreenState extends State<MainScreen> {
   late double screenHeight, screenWidth, resWidth;
   var numofpage, curpage = 1;
   var color;
+  int cart = 0;
   TextEditingController searchController = TextEditingController();
   String search = "";
   @override
@@ -50,7 +52,14 @@ class _MainScreenState extends State<MainScreen> {
             },
           ),
           TextButton.icon(
-            onPressed: () async {},
+            onPressed: () async {
+              await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (content) => CartScreen(user: widget.user)));
+              _loadSubjects(1, search);
+              _loadMyCart();
+            },
             icon: const Icon(
               Icons.shopping_cart,
               color: Colors.black,
@@ -79,7 +88,7 @@ class _MainScreenState extends State<MainScreen> {
                 Expanded(
                     child: GridView.count(
                         crossAxisCount: 1,
-                        childAspectRatio: (1 / 1),
+                        childAspectRatio: (1 / 1.14),
                         children: List.generate(subjectList!.length, (index) {
                           return Card(
                               child: Column(
@@ -99,7 +108,7 @@ class _MainScreenState extends State<MainScreen> {
                                       const Icon(Icons.error),
                                 ),
                               ),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 10),
                               Flexible(
                                   flex: 4,
                                   child: Center(
@@ -266,6 +275,29 @@ class _MainScreenState extends State<MainScreen> {
 
   _addtocartDialog(int index) {
     _addtoCart(index);
+  }
+
+  void _loadMyCart() {
+    http.post(
+        Uri.parse(CONSTANTS.server + "/mytutor/mobile/php/load_mycartqty.php"),
+        body: {
+          "email": widget.user.email.toString(),
+        }).timeout(
+      const Duration(seconds: 5),
+      onTimeout: () {
+        return http.Response(
+            'Error', 408); // Request Timeout response status code
+      },
+    ).then((response) {
+      print(response.body);
+      var jsondata = jsonDecode(response.body);
+      if (response.statusCode == 200 && jsondata['status'] == 'success') {
+        print(jsondata['data']['carttotal'].toString());
+        setState(() {
+          widget.user.cart = jsondata['data']['carttotal'].toString();
+        });
+      }
+    });
   }
 
   void _addtoCart(int index) {
