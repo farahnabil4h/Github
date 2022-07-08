@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import '../constants.dart';
 import '../models/cart.dart';
@@ -120,7 +121,7 @@ class _CartScreenState extends State<CartScreen> {
                                                 .toString()),*/
                                               IconButton(
                                                   onPressed: () {
-                                                    //_deleteItem(index);
+                                                    _deleteItem(index);
                                                   },
                                                   icon:
                                                       const Icon(Icons.delete))
@@ -201,4 +202,37 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   void _onPaynowDialog() {}
+
+  void _deleteItem(int index) {
+    http.post(
+        Uri.parse(CONSTANTS.server + "/mytutor/mobile/php/delete_cart.php"),
+        body: {
+          'email': widget.user.email,
+          'cartid': cartList[index].cartid
+        }).timeout(
+      const Duration(seconds: 5),
+      onTimeout: () {
+        return http.Response(
+            'Error', 408); // Request Timeout response status code
+      },
+    ).then((response) {
+      var jsondata = jsonDecode(response.body);
+      if (response.statusCode == 200 && jsondata['status'] == 'success') {
+        Fluttertoast.showToast(
+            msg: "Success",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 16.0);
+        _loadCart();
+      } else {
+        Fluttertoast.showToast(
+            msg: "Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 16.0);
+      }
+    });
+  }
 }
