@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:mytutor/views/paymentscreen.dart';
 import '../constants.dart';
 import '../models/cart.dart';
 import '../models/user.dart';
@@ -89,21 +90,10 @@ class _CartScreenState extends State<CartScreen> {
                                             style: const TextStyle(
                                                 fontSize: 19,
                                                 color: Colors.green)),
-                                        /*Text(
-                                            "RM " +
-                                                double.parse(cartList[index]
-                                                        .subprice
-                                                        .toString())
-                                                    .toStringAsFixed(2) +
-                                                "/subject",
-                                            style: const TextStyle(
-                                                fontSize: 25,
-                                                fontWeight: FontWeight.bold)),*/
                                         Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             children: [
-                                              //const Spacer(),
                                               Text(
                                                 "RM " +
                                                     double.parse(cartList[index]
@@ -115,10 +105,6 @@ class _CartScreenState extends State<CartScreen> {
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
-
-                                              /*Text(cartList[index]
-                                                .cartqty
-                                                .toString()),*/
                                               IconButton(
                                                   onPressed: () {
                                                     _deleteItem(index);
@@ -190,7 +176,7 @@ class _CartScreenState extends State<CartScreen> {
             totalpayable =
                 totalpayable + double.parse(element.pricetotal.toString());
           }
-          titlecenter = qty.toString() + " Subjects Has Been Added";
+          titlecenter = qty.toString() + " Added Subjects";
           setState(() {});
         }
       } else {
@@ -201,7 +187,48 @@ class _CartScreenState extends State<CartScreen> {
     });
   }
 
-  void _onPaynowDialog() {}
+  void _onPaynowDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          title: const Text(
+            "Pay Now",
+            style: TextStyle(),
+          ),
+          content: const Text("Are you sure?", style: TextStyle()),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                "Yes",
+                style: TextStyle(),
+              ),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (content) => PaymentScreen(
+                            user: widget.user, totalpayable: totalpayable)));
+                _loadCart();
+              },
+            ),
+            TextButton(
+              child: const Text(
+                "No",
+                style: TextStyle(),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   void _deleteItem(int index) {
     http.post(
